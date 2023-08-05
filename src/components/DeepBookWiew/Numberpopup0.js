@@ -79,7 +79,7 @@ const NumberPopup = () => {
     );
     progressBarBidsMap[bidsListwork[i][0]] = i;
   }
-  console.log(progressBarBids);
+  
 
   for (let i = 0; i < 500; i++) {
     progressBarAsks.push(
@@ -120,10 +120,7 @@ const NumberPopup = () => {
 // изменяет списки с элементами 
     const apdateList = (bids , asks, bidsListwork, asksListwork,  progressBarBidsMap, progressBarAsksMap) => {
 
-  // console.log(bidsListwork)
-  // console.log(bids)
-  // console.log('progressBarBidsMap')
-  // console.log(progressBarBidsMap)
+  
   for (let i = 0; i < bids.length; i++) {
     if (bids[i][0] in progressBarBidsMap)
     {
