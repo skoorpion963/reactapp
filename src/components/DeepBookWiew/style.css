@@ -1,0 +1,9 @@
+.progress-bar-container {
+    display: flex;
+    align-items: center;
+  }
+  
+  .progress-text {
+    margin-right: 10px;
+  }
+  
