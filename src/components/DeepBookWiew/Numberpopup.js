@@ -102,7 +102,7 @@ const NumberPopup = () => {
         );
       }
 
-      const result = { progressBarAsks, progressBarBids};
+        const result = { progressBarAsks, progressBarBids};
       setState((prevState) => ({ ...prevState, data: result }));
       
   
@@ -178,7 +178,8 @@ const NumberPopup = () => {
           )
         };
       };
-
+      const result = { progressBarAsks, progressBarBids};
+      setState((prevState) => ({ ...prevState, data: result }));
       setUppdate(prevUppdate => prevUppdate + 1);
 
     };

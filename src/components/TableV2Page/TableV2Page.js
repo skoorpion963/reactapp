@@ -3,7 +3,8 @@ import Navbar from '../Navbar/Navbar';
 import TableV2 from '../Tablev2/Tablev2';
 import Footer from '../Footer/Footer';
 import DeepBookWiew from '../DeepBookWiew/DeepBookWiew';
-import NumberPopup from '../DeepBookWiew/Numberpopup';
+import NumberPopup from '../DeepBookWiew/Numberpopup0';
+
 import WebSocket from '../DeepBookWiew/Websocket';
 
 const TablePageV2 = () => {
