@@ -1,34 +1,55 @@
 import React, { useEffect, useState } from 'react';
+import NumberPopup from '../DeepBookWiew/Numberpopup0';
+
 
 const TableV2 = () => {
-
+  const [isNumberPopupVisible, setIsNumberPopupVisible] = useState(false);
   const [data, setData] = useState([]);
   const [hoveredRow, setHoveredRow] = useState(null); // Объявляем состояние hoveredRow
   const [key_enter, setKeyEnter] = useState(null);
   const [name_elem, setNameElem] = useState(null);
-  const [data_info , setDataInfo] = useState(null)
-  
+  const [data_info , setDataInfo] = useState(null);
+  const [numberPopupData, setNumberPopupData] = useState(null);
 
-  const handleMouseEnter = (index, dataInfo) => {
+    
+  
+  const handleNumberPopupButtonClick = (symbol) => {
+    console.log(symbol);
+    setIsNumberPopupVisible(true); // Устанавливаем флаг видимости попапа
+    setNumberPopupData({ symbol });
+  };
+
+
+  const handleCloseNumberPopup = () => {
+    setIsNumberPopupVisible(false); // Закрыть модальное окно
+  };
+
+  const handleMouseEnter = (index,item, dataInfo) => {
     const [value1, value2] = dataInfo.split(',').map(Number);
-    console.log(index, value1, value2, 'enter');
+    console.log(item.name, value1, value2, 'enter');
     setKeyEnter(index); // Используем setKeyEnter для обновления значения key_enter
     setDataInfo([value1,value2]);
     if (value1 == 1){
       var elem = document.getElementById(`${index}.bids`);
-      elem.innerHTML = `<td id="${index+".bids"}">${elem.textContent}
-       <img src="/images/pngegg.png" className="img-fluid"  style="width: 25px; height: 25px;" /></td>`;
+      elem.innerHTML = `
+      <td id="${index}.bids">${elem.textContent}
+          <button class="btn btn-primary">
+              <img src="/images/pngegg.png" className="img-fluid" style="width: 25px; height: 25px;" />
+          </button>
+      </td>
+    `;
+      elem.onclick = () => handleNumberPopupButtonClick(item.name);
     }
     if (value2 == 1){
       var elem = document.getElementById(`${index}.asks`);
       elem.innerHTML = `<td id="${index+".asks"}">${elem.textContent}
-       <img src="/images/pngegg.png" className="img-fluid"  style="width: 25px; height: 25px;" /></td>`;
+      <button class="btn btn-primary">
+       <img src="/images/pngegg.png" className="img-fluid"  style="width: 25px; height: 25px;" />
+       </button>
+       </td>`;
+       elem.onclick = () =>  handleNumberPopupButtonClick(item.name)
     }
-    // var elem = document.getElementById(index);
-    // setNameElem(elem.textContent); // Используем setNameElem для обновления значения name_elem
-    // elem.innerHTML = `<td id="${index}">
-    // <img src="/images/pngegg.png" className="img-fluid"  style="width: 25px; height: 25px;" /></td>`;
-    // setHoveredRow(index);
+
   };
   
   const handleMouseLeave = () => {
@@ -45,14 +66,6 @@ const TableV2 = () => {
       var elem = document.getElementById(`${index}.asks`);
       elem.innerHTML = `<td id="${index+".asks"}">${elem.textContent}</td>`;
     }
-
-
-
-    // var elem = document.getElementById(key_enter);
-    // elem.innerHTML = `<td id="${key_enter}">${name_elem}</td>`;
-    // setKeyEnter(null); // Сбрасываем значение key_enter
-    // setNameElem(null); // Сбрасываем значение name_elem
-    // setHoveredRow(null);
   };
 
   useEffect(() => {
@@ -76,6 +89,12 @@ const TableV2 = () => {
   return (
   
     <div className="container">
+      {isNumberPopupVisible && (
+        <NumberPopup
+        dataToPass={numberPopupData || { symbol: null }}
+        onClose={handleCloseNumberPopup}
+      />
+      )}
       <div className='col-md-8 mx-auto text-center mb-10' >
         <table className="table table-striped table-bordered table-responsive">
           <thead>
@@ -98,10 +117,11 @@ const TableV2 = () => {
                   if (item.asks !== " - "){data[1] = 1};
                   return (
                     <tr
-                      data-info={data.join(',')} // Преобразуйте массив `data` в строку, разделяя значения запятой
+                      data-info={data.join(',')} 
                       className={'table-primary'}
-                      onMouseEnter={(e) => handleMouseEnter(index, e.currentTarget.getAttribute('data-info'))} // Используйте `getAttribute` для получения значения атрибута
+                      onMouseEnter={(e) => handleMouseEnter(index,item, e.currentTarget.getAttribute('data-info'))} // Используйте `getAttribute` для получения значения атрибута
                       onMouseLeave={handleMouseLeave}
+                      key = {item.name}
                     >
                       <td>{item.name}</td>
                       <td>{item.values}</td>

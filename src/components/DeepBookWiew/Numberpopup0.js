@@ -3,7 +3,7 @@ import { Modal, ProgressBar , Row , Col} from 'react-bootstrap';
 import axios from 'axios';
 import './style.css'
 
-const symbol = 'BTCUSDT'; // Замените на нужный символ
+
 
 // кастомизация прогресс бара 
 const TextProgressBar = ({ price, now, variant , quantity }) => {
@@ -11,7 +11,7 @@ const TextProgressBar = ({ price, now, variant , quantity }) => {
       <div className="text-progress-bar">
         <Row>
           <Col xs="auto">
-            <span>{price}</span>
+            <span className={`text-${variant}`}><strong>{price}</strong></span>
           </Col>
           <Col>
             
@@ -31,12 +31,9 @@ const TextProgressBar = ({ price, now, variant , quantity }) => {
 
 
 // вывод стакана
-const NumberPopup = () => {
-    const [showModal, setShowModal] = useState(true);
-   
-    const symbol = "btcusdt";
-    const serverAddress = 'wss://fstream.binance.com/ws/'+symbol+'@depth@500ms';
-    
+const NumberPopup = ({ dataToPass = {}, onClose }) => {
+
+    const [showModal, setShowModal] = useState(true);    
     const [loadData , setLoadData] = useState(false);
     const [state, setState] = useState({
       data: null,
@@ -44,108 +41,100 @@ const NumberPopup = () => {
     });
     const [uppdate, setUppdate ] = useState(0)
 
-
-    // получение снимка стакана и подготовка данных к выводу 
+    console.log(dataToPass)
+    console.log(dataToPass.symbol)
+    // обработка ответа вебсокета 
     const processDepthData = (bids , asks) => {
-  // поиск макс числа 
-  // можно оптимизировать путем нахождения maxAll в обновлениях для bids и asks
-  const bidsList = bids.map(item => parseFloat(item[1]));
-  const asksList = asks.map(item => parseFloat(item[1]));
-  const maxBid = Math.max(...bidsList);
-  const maxAsk = Math.max(...asksList);
-  const maxAll = maxBid > maxAsk ? maxBid : maxAsk;
+    // поиск макс числа 
+    // можно оптимизировать путем нахождения maxAll в обновлениях для bids и asks
+    const bidsList = bids.map(item => parseFloat(item[1]));
+    const asksList = asks.map(item => parseFloat(item[1]));
+    const maxBid = Math.max(...bidsList);
+    const maxAsk = Math.max(...asksList);
+    const maxAll = maxBid > maxAsk ? maxBid : maxAsk;
 
-  const bidsListwork = bids;
-  const asksListwork = asks;
+    const bidsListwork = bids;
+    const asksListwork = asks;
 
-  const progressBarAsksMap = {};
-  const progressBarBidsMap = {};
-  const progressBarBids = [];
-  const progressBarAsks = [];
+    const progressBar = [];
+    const progressBarMap = {};
 
 
-  // можно оптимизировать , вместо пересборки обновлять значения внутри "progressBarBids"
-  // пересобирать если maxAll становится больше текущего на 20%
-  for (let i = 0; i < 500; i++) {
-    progressBarBids.push(
-      <div key={bidsListwork[i][0].uniqueId} className="progress-item">
-        <TextProgressBar
-          price={bidsListwork[i][0]}
-          quantity={bidsListwork[i][1]}
-          now={(bidsListwork[i][1] / maxAll) * 100}
-          variant="success"
-        />
-      </div>
-    );
-    progressBarBidsMap[bidsListwork[i][0]] = i;
-  }
-  
+    for (let i = 0; i < 500; i++) {
+      progressBar.push(
 
-  for (let i = 0; i < 500; i++) {
-    progressBarAsks.push(
-      <div key={asksListwork[i][0].uniqueId} className="progress-item">
-        <TextProgressBar
-          price={asksListwork[i][0]}
-          quantity={asksListwork[i][1]}
-          now={(asksListwork[i][1] / maxAll) * 100}
-          variant="danger"
-        />
-      </div>
-    );
-    progressBarAsksMap[asksListwork[i][0]] = i;
-  }
+        [asksListwork[i][0],asksListwork[i][0],
+        asksListwork[i][1],(asksListwork[i][1] / maxAll) * 100,"success"]
+      );
+      progressBarMap[asksListwork[i][0]] = i;
+    }
 
+    for (let i = 0; i < 500; i++) {
+      progressBar.push(
 
-  const result = { progressBarAsks, progressBarBids, progressBarAsksMap, progressBarBidsMap ,asksListwork, bidsListwork};
-  setState((prevState) => ({ ...prevState, data: result }));
-  setUppdate(uppdate+1);
-  console.log(uppdate)
+        [bidsListwork[i][0],bidsListwork[i][0],
+        bidsListwork[i][1],(bidsListwork[i][1] / maxAll) * 100,"danger"]
+      );
+      progressBarMap[bidsListwork[i][0]] = i+ 500;
+    }
+
+    const result = { progressBar, progressBarMap , maxAll};
+    setState((prevState) => ({ ...prevState, data: result }));
+    setUppdate(uppdate+1);
   
     };
+
+
     // получаю снимок 
     const fetchData = async (symbol) => {
-  try {
-    const response = await axios.get(`https://fapi.binance.com/fapi/v1/depth?symbol=${symbol}`);
-    const data = response.data;
-    
-
-    return processDepthData(data.bids,data.asks.reverse());
-  } catch (error) {
-    console.error('Произошла ошибка:', error.message);
-  }
-    };
-
-
-
-// изменяет списки с элементами 
-    const apdateList = (bids , asks, bidsListwork, asksListwork,  progressBarBidsMap, progressBarAsksMap) => {
-
+      try {
+        const response = await axios.get(`https://fapi.binance.com/fapi/v1/depth?symbol=${symbol}`);
+        const data = response.data;
   
-  for (let i = 0; i < bids.length; i++) {
-    if (bids[i][0] in progressBarBidsMap)
-    {
-      bidsListwork[progressBarBidsMap[bids[i][0]]] = [bids[i][0] ,bids[i][1]];
-    };
-  };
-
-  for (let i = 0; i < asks.length; i++) {
-    if(asks[i][0] in progressBarAsksMap)
-    {
-      asksListwork[progressBarAsksMap[asks[i][0]]] = [asks[i][0],asks[i][1]];
-    };
-  };
-
-  processDepthData(bidsListwork, asksListwork);
-
+        return processDepthData(data.bids,data.asks.reverse());
+      } catch (error) {
+        console.error('Произошла ошибка:', error.message);
+      }
     };
 
 
+    // изменяет списки с элементами 
+    const apdateList = (bids , asks, progressBar, progressBarMap , maxAll) => {
+
+      for (let i = 0; i < bids.length; i++) {
+        if (bids[i][0] in progressBarMap)
+        {
+          const value = bids[i][1] !== 0 ? (bids[i][1] / maxAll) * 100 : 0;
+          const pB = progressBar[progressBarMap[bids[i][0]]]
+          pB[2] = bids[i][1]
+          pB[3] = value
+          pB[4] = "danger"
+        };
+      };
+
+      for (let i = 0; i < asks.length; i++) {
+        if(asks[i][0] in progressBarMap)
+        {
+          const value = asks[i][1] !== 0 ? (asks[i][1] / maxAll) * 100 : 0;
+          const pB = progressBar[progressBarMap[asks[i][0]]]
+          pB[2] = asks[i][1]
+          pB[3] = value
+          pB[4] = "success"
+        };
+      };
+
+      const result = { progressBar, progressBarMap, maxAll};
+      setState((prevState) => ({ ...prevState, data: result }));
+      setUppdate(uppdate+1);
 
 
+    };
 
-// подключение к потоку
-    const connectToWebSocket = (serverAddress,state) => {
+
+    // подключение к потоку
+    const connectToWebSocket = (symbol,state) => {
       
+      const serverAddress = 'wss://fstream.binance.com/ws/'+symbol+'@depth@500ms';
       const newSocket = new WebSocket(serverAddress);
       newSocket.onopen = () => {
         console.log('WebSocket connection is open.');
@@ -157,10 +146,9 @@ const NumberPopup = () => {
             
             const bids = data_js.b;
             const asks = data_js.a;
-            const {progressBarBids, progressBarAsks, progressBarBidsMap,
-               progressBarAsksMap, bidsListwork, asksListwork} = state.data;
+            const {progressBar, progressBarMap ,maxAll} = state.data;
             
-            apdateList(bids , asks, bidsListwork, asksListwork,  progressBarBidsMap, progressBarAsksMap);
+            apdateList(bids , asks, progressBar, progressBarMap, maxAll);
           }
           
           
@@ -178,20 +166,23 @@ const NumberPopup = () => {
       return newSocket;
     };
 
-    
 
+    // получаю снимок стакана
     useEffect(() => {
-      const fetchDataAsync = async () => {
-        await fetchData(symbol); // Вызываем функцию и получаем результат
-        
-        
-        setLoadData(true);
-      };
-  
-      if (!state.data) {
-        fetchDataAsync();
+      if (dataToPass && dataToPass.symbol !== null){ // Добавили проверку на наличие dataToPass.dataToPass
+        const fetchDataAsync = async () => {
+          const symbol = dataToPass.symbol;
+          console.log(symbol)
+          await fetchData(symbol);
+          
+          setLoadData(true);
+        };
+
+        if (!state.data) {
+          fetchDataAsync();
+        }
       }
-    }, []);
+    }, [dataToPass]);
 
 
     // эффект обновляющий значения на экране 
@@ -202,80 +193,106 @@ const NumberPopup = () => {
   
     const modalRef = useRef(null);
 
+    // эффек прокрутки стакана к середине 
     useEffect(() => {
       const scrollIntoViewIfNeeded = () => {
           if (modalRef.current) {
-              const centralElement = modalRef.current.querySelector('.central-element');
+
+              const centralElement = modalRef.current.querySelector('.progress-item[data-id="current-bar"]');
               console.log(centralElement);
+
               if (centralElement) {
                   centralElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                  console.log('прокрутил ');
+
               }
           }
       };
   
       if (showModal) {
+
           scrollIntoViewIfNeeded();
       }
-  }, [showModal, modalRef.current]);
+    }, [showModal, modalRef.current]);
 
+    //вебсокет 
     useEffect(() => {
-      if (loadData) {
-        console.log('вебсокет ЗАПУЩЕН!!!!!!!!');
-        const newSocket = connectToWebSocket(serverAddress,state);
-        setState((prevState) => ({ ...prevState, socket: newSocket }));
-  
-        return () => {
-          if (newSocket) {
-            newSocket.close();
-          }
-        };
+      if (dataToPass.symbol !== null){
+        if (loadData) {
+          console.log('вебсокет ЗАПУЩЕН!!!!!!!!');
+          const symbol = dataToPass.symbol;
+          const newSocket = connectToWebSocket(symbol,state);
+          setState((prevState) => ({ ...prevState, socket: newSocket }));
+    
+          return () => {
+            if (newSocket) {
+              newSocket.close();
+            }
+          };
+        }
       }
     }, [loadData]);
 
 
     useEffect(() =>{
-      console.log('UPPDATE!!!!!!!')
-    },[uppdate]);
+
+    },[uppdate]); 
     
+    if (dataToPass.symbol == null){
+      return <div></div>
+    }
 
     if (!state.data) {
-      return <div>Loading...</div>; // Показываем загрузочное сообщение, пока данные загружаются
+  
+        return <div>Loading...</div>;
+      
     }
     
 
+    // Обработчик закрытия модального окна
     const handleClose = () => {
-        setShowModal(false); // Установите состояние showModal в false для закрытия окна
-      };
+      if (state.socket) {
+          state.socket.close(); // Закрываем WebSocket соединение
+      }
+      setShowModal(false); // Устанавливаем состояние showModal в false для закрытия окна
+      onClose(); // Вызываем переданную функцию для закрытия компонента
+  };
 
 
-    // Далее вы можете использовать данные из объекта data, например:
-    const {progressBarBids , progressBarAsks} = state.data;
     
- 
-    // Ссылка на элемент модального окна
+    // Далее вы можете использовать данные из объекта data, например:
+    const {progressBar} = state.data;
+    const progressBarRender = [];
+    for (let i=0; i < progressBar.length; i++){
+      progressBarRender.push(
+        <div key={progressBar[i][0]} className="progress-item" data-id = {`${i === 500 ? 'current-bar' : ''}`}>
+          <TextProgressBar
+            price={progressBar[i][1]}
+            quantity={progressBar[i][2]}
+            now={progressBar[i][3]}
+            variant={progressBar[i][4]}
+          />
+        </div>
+        );
+    }
+    console.log('render')
+  
+  
+    
+    return (
+      <Modal show={showModal} onHide={handleClose} scrollable>
+        <Modal.Header closeButton>
+          <Modal.Title><p>{dataToPass.symbol}</p></Modal.Title>
+        </Modal.Header>
+        <Modal.Body  ref={modalRef}>
+          {progressBarRender}
+        </Modal.Body>
+        <Modal.Footer>
 
-
+        </Modal.Footer>
+      </Modal>
+    );
   
 
-
-  return (
-    <Modal show={showModal} onHide={handleClose} scrollable>
-      <Modal.Header closeButton>
-        <Modal.Title></Modal.Title>
-      </Modal.Header>
-      <Modal.Body  ref={modalRef}>
-        {progressBarAsks}
-        <div className="central-element">------</div>
-        {progressBarBids}
-      </Modal.Body>
-      <Modal.Footer>
-        <button className="btn btn-primary">
-            <i className="bi bi-clipboard"></i> Copy Code
-            </button>
-      </Modal.Footer>
-    </Modal>
-  );
 };
 
 export default NumberPopup;
