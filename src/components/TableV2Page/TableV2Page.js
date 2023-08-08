@@ -11,8 +11,6 @@ const TablePageV2 = () => {
     return (
       <div>
         <Navbar />
-        <NumberPopup />
-        {/* <WebSocket/> */}
         <div className="mb-5"></div>
         <div className="mb-5"></div>
         <div className="mb-5"></div>
