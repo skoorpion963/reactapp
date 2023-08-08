@@ -142,17 +142,6 @@ const TableV2 = () => {
       </div>
 
 
-    <div className="mb-5"><br /> </div>
-    <div className="mb-5"><br /> </div>
-    <div className="mb-5"><br /> </div>
-    <div className="mb-5"><br /> </div>
-    <div className="mb-5"><br /> </div>
-    <div className="mb-5"><br /> </div>
-    <div className="mb-5"><br /> </div>
-    <div className="mb-5"><br /> </div>
-    <div className="mb-5"><br /> </div>
-    <div className="mb-5"><br /> </div>
-    <div className="mb-5"><br /> </div>
 
 
   </div>

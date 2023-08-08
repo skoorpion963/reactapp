@@ -2,10 +2,7 @@ import React from 'react';
 import Navbar from '../Navbar/Navbar';
 import TableV2 from '../Tablev2/Tablev2';
 import Footer from '../Footer/Footer';
-import DeepBookWiew from '../DeepBookWiew/DeepBookWiew';
-import NumberPopup from '../DeepBookWiew/Numberpopup0';
-
-import WebSocket from '../DeepBookWiew/Websocket';
+import Layout from '../Footer/Layout';
 
 const TablePageV2 = () => {
     return (
@@ -16,7 +13,8 @@ const TablePageV2 = () => {
         <div className="mb-5"></div>
         
         <TableV2/>
-        <Footer />
+        <Layout/>
+        {/* <Footer /> */}
       </div>
     );
   };

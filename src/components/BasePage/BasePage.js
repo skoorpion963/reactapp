@@ -2,7 +2,7 @@ import React from 'react';
 import Navbar from '../Navbar/Navbar';
 import MainPageContent from '../MainPageContent/MainPageContent';
 import Footer from '../Footer/Footer';
-// import DoublyLinkedList from '../DeepBookWiew/DoublyLinkedList';
+import Layout from '../Footer/Layout';
 
 
 const BasePage = () => {
@@ -11,7 +11,7 @@ const BasePage = () => {
         <Navbar />
         {/* <DoublyLinkedList/> */}
         <MainPageContent />
-        <Footer />
+        <Footer/>
       </div>
     );
   };
