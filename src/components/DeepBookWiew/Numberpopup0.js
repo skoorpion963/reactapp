@@ -233,9 +233,6 @@ const NumberPopup = ({ dataToPass = {}, onClose }) => {
     }, [loadData]);
 
 
-    useEffect(() =>{
-
-    },[uppdate]); 
     
     if (dataToPass.symbol == null){
       return <div></div>

@@ -11,7 +11,6 @@ const TableV2 = () => {
   const [data_info , setDataInfo] = useState(null);
   const [numberPopupData, setNumberPopupData] = useState(null);
 
-    
   
   const handleNumberPopupButtonClick = (symbol) => {
     console.log(symbol);
@@ -73,13 +72,24 @@ const TableV2 = () => {
       try {
         const response = await fetch('http://127.0.0.1:8000/api/v1/tableV2/');
         const jsonData = await response.json();
+        console.log(jsonData)
         setData(jsonData.data);
       } catch (error) {
         console.error('Ошибка при получении данных из API:', error);
       }
     };
 
-    const interval = setInterval(fetchData, 3000);
+    
+    const now = new Date();
+    const seconds = now.getSeconds();
+    console.log(seconds)
+    let interval = 0
+    if (seconds == 0 || seconds <= 3){
+      interval = setInterval(fetchData, (3000 - seconds*1000 +1000));
+    }
+    else{
+      interval = setInterval(fetchData, 3000);
+    };
 
     return () => {
       clearInterval(interval);
