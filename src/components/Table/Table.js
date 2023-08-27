@@ -70,7 +70,8 @@ const Table = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:8000/api/v1/table/');
+        const response = await fetch('http://192.168.1.140:8000/api/v1/table/');
+        console.log(response)
         const jsonData = await response.json();
         console.log(jsonData)
         setData(jsonData.data);
@@ -105,7 +106,7 @@ const Table = () => {
         onClose={handleCloseNumberPopup}
       />
       )}
-      <div className='col-md-8 mx-auto text-center mb-10' >
+      <div className='col-md-12 mx-auto text-center mb-10' >
         <table className="table table-striped table-bordered table-responsive">
           <thead>
             <tr className="table-secondary sticky-top">

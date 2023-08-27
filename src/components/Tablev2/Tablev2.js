@@ -70,7 +70,7 @@ const TableV2 = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:8000/api/v1/tableV2/');
+        const response = await fetch('http://192.168.1.140:8000/api/v1/tableV2/');
         const jsonData = await response.json();
         console.log(jsonData)
         setData(jsonData.data);
@@ -99,13 +99,14 @@ const TableV2 = () => {
   return (
   
     <div className="container">
+      
       {isNumberPopupVisible && (
         <NumberPopup
         dataToPass={numberPopupData || { symbol: null }}
         onClose={handleCloseNumberPopup}
       />
       )}
-      <div className='col-md-8 mx-auto text-center mb-10' >
+      <div className='col-md-12 mx-auto text-center mb-10' >
         <table className="table table-striped table-bordered table-responsive">
           <thead>
             <tr className="table-secondary sticky-top">

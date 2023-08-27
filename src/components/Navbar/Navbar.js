@@ -1,37 +1,29 @@
 import React from 'react';
 
-
 const Navbar = () => {
   return (
-
-    
-    
-    <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
-        <div class="container">
+    <nav className="navbar navbar-expand-lg bg-primary">
+      <div className="container">
         <img src="/images/logo.png" className="img-small" style={{ width: '40px', height: '40px' }} />
 
-            {/* <a class="navbar-brand" href="/">Крутой логотип</a> */}
-            
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item">
-                      <a class="nav-link" href="/">Главная</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/table">Скринер</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/tableV2">СкринерV2</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/api">API</a>
-                    </li>
-                </ul>
-            </div>
+        <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span className="navbar-toggler-icon"></span>
+        </button>
+
+        <div className="collapse navbar-collapse" id="navbarNav">
+          <ul className="navbar-nav ml-auto">
+            <li className="nav-item">
+            <a className="nav-link text-white" href="/">Главная</a>
+            </li>
+            <li className="nav-item">
+            <a className="nav-link text-white" href="/table">Скринер</a>
+            </li>
+            <li className="nav-item">
+            <a className="nav-link text-white" href="/tableV2">СкринерV2</a>
+            </li>
+          </ul>
         </div>
+      </div>
     </nav>
   );
 };
